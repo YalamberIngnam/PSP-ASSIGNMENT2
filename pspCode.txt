@@ -1,0 +1,1018 @@
+
+/**
+ * Program: Assignment 2: Application -Car NavigationMaze
+ * Filename: CCarCrash.java
+ * @author Yalamber Ingnam(19436760)
+ * Course: Computing Year 1
+ * MOdule: CSY-1020(PSP)
+ * Tutor: Kumar Lamichanne
+ * @version: 
+ * Date:6/22/2019
+ */
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
+
+public class CCarCrash extends JFrame implements ActionListener {
+
+	private Container contain;
+	private Boolean clickChecker = false;
+	public JButton[][] spaceImg;
+	private JButton act, pause, run, reset, option1, option2, option3, exit, up, down, left, right, blank1,
+			compassHolder;
+	private static CCarCrash frame;
+	private JMenuBar menu;
+	private JTextField options, squares, directions, hour, minute, second, milisecond;
+	private JMenuItem i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19, i20, i21,
+			i22, i23, i24, i25, i26, i27, i28, i29, i30, i31, i32, i33;
+	private ImageIcon myImage = new ImageIcon("./Images/step.png"), myImage1 = new ImageIcon("./Images/run.png"),
+			myImage2 = new ImageIcon("./Images/reset.png"), myImage3 = new ImageIcon("./Images/pause.png"),
+			east = new ImageIcon("./Images/east.jpg"), west = new ImageIcon("./Images/west.jpg"),
+			north = new ImageIcon("./Images/north.jpg"), south = new ImageIcon("./Images/south.jpg"),
+			background = new ImageIcon("./Images/space.jpg"), horizWall = new ImageIcon("./Images/wall-horiz.png"),
+			vertWall = new ImageIcon("./Images/wall-vert.png"),N0E=new ImageIcon("./Images/wall-NE.png"),N0W=new ImageIcon("./Images/wall-NW.png"),S0W=new ImageIcon("./Images/wall-SW.png"),
+			S0E= new ImageIcon("./Images/wall-SE.png"),carEast=new ImageIcon("./Images/car-e.png"),carWest=new ImageIcon("./Images/car-w.png"),carNorth=new ImageIcon("./Images/car-n.png"),carSouth=new ImageIcon("./Images/car-s.png");
+	private JPanel bottom, compass, asideLeft;
+	private JLabel eastImage, northImage;
+	private int miliseconds = 1, seconds = 1, minutes = 1, hours = 1, x = 1, y = 1,i=0,j=0;
+	private Timer timer;
+	
+	
+	
+
+	public static void main(String[] args) {
+		// Creates the window
+		frame = new CCarCrash();
+		frame.createGUI();
+		frame.menuBar();
+		frame.leftColumn();
+		frame.rightColumn();
+		frame.footer();
+		frame.driveCar();
+
+	}
+
+	private void createGUI() {
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		ImageIcon logo = new ImageIcon("./Images/greenfoot.png");
+		// Overrides the default java icon and replaces user custom icons
+		setIconImage(logo.getImage());
+		setSize(810, 650);
+		setTitle("Car Crash-Car Race Application");
+		setResizable(false);
+		// Sets the initial pop up location in the middle of the screen
+		setLocationRelativeTo(null);
+		contain = getContentPane();
+		contain.setLayout(null);
+		// Displays the window
+		setVisible(true);
+		timer = new Timer(10, this);
+	}
+
+	// Sets up the menubar in the main window and provides the sub-menu items
+	private void menuBar() {
+		JMenuBar menu = new JMenuBar();
+
+		// Creates and adds the sub menu item for the "Scenario" menu in the window
+		JMenu items = new JMenu("Scenario");// Creates a menu for menu bar
+		i1 = new JMenuItem("New Stride Scenario");// Creates a items of a menu
+		i2 = new JMenuItem("New Java Scenario");
+		i3 = new JMenuItem("Open");
+		i4 = new JMenuItem("open recent");
+		i5 = new JMenuItem("Open GFAR");
+		i6 = new JMenuItem("Close");
+		i7 = new JMenuItem("Save");
+		i8 = new JMenuItem("Save As");
+		i9 = new JMenuItem("Scenario Information");
+		i10 = new JMenuItem("Share");
+		i11 = new JMenuItem("Quit");
+		
+		
+		
+
+		items.add(i1);// Adds a items in menu
+		items.add(i2);
+		items.add(i3);
+		items.add(i4);
+		items.add(i5);
+		items.add(i6);
+		items.add(i7);
+		items.addSeparator();// Gives a distinct line between the menu items
+		items.add(i8);
+		items.add(i9);
+		items.add(i10);
+		items.addSeparator();
+		items.add(i11);
+		i11.addActionListener(new ActionListener() {
+
+			// Action listener for i11 menu item
+			public void actionPerformed(ActionEvent e) {
+				// Terminates the running GUI
+				System.exit(0);
+
+			}
+		});
+
+		// Creates and adds the sub menu item for the "Edit" menu in the window
+		JMenu items1 = new JMenu("Edit");
+		i12 = new JMenuItem("New Class");
+		i13 = new JMenuItem("Import Class");
+		items1.add(i12);
+		items1.add(i13);
+
+		// Creates and adds the sub menu item for the "Controls" menu in the window
+		JMenu items2 = new JMenu("Controls");
+		i14 = new JMenuItem("Act");
+		i15 = new JMenuItem("Run");
+		i16 = new JMenuItem("Reset");
+		i17 = new JMenuItem("Pause");
+		items2.add(i14);
+		i14.setIcon(myImage);// Sets icon for the given menu item
+		items2.add(i15);
+		i15.setIcon(myImage1);
+		items2.add(i16);
+		i16.setIcon(myImage2);
+		items2.add(i17);
+		i17.setIcon(myImage3);
+
+		// Creates and adds the sub menu item for the "Tools" menu in the window
+		JMenu items4 = new JMenu("Tools");
+		i18 = new JMenuItem("Save the World");
+		i19 = new JMenuItem("Project Documentation");
+		i20 = new JMenuItem("Show Sound Recorder  " + "   " + "  Ctrl+U");
+		i21 = new JMenuItem("Show Debugger");
+		i22 = new JMenuItem("Set Player Name");
+		i23 = new JMenuItem("Preferences");
+		items4.add(i18);
+		items4.add(i19);
+		items4.add(i20);
+		items4.add(i21);
+		items4.add(i22);
+		items4.add(i23);
+
+		// Creates and adds the sub menu item for the "Help" menu in the window
+		JMenu items3 = new JMenu("Help");
+		i24 = new JMenuItem("About GreenFoot");
+		i25 = new JMenuItem("Copyright");
+		i26 = new JMenuItem("Greenfoot Class Documentation");
+		i27 = new JMenuItem("Java Libary Documentation");
+		i28 = new JMenuItem("Greenfoot Tutorial");
+		i29 = new JMenuItem("Greenfoot Web Site");
+		i30 = new JMenuItem("Get more scenarios");
+		i31 = new JMenuItem("Greenfoot Gallery");
+		i32 = new JMenuItem("Greenfoot Discussion");
+		i33 = new JMenuItem("Greenfoot Gallary");
+		items3.add(i24);
+		items3.add(i25);
+		items3.addSeparator();
+		items3.add(i26);
+		items3.add(i27);
+		items3.addSeparator();
+		items3.add(i28);
+		items3.add(i29);
+		items3.add(i30);
+		items3.addSeparator();
+		items3.add(i31);
+		items3.add(i32);
+		items3.add(i33);
+
+		// Adds all the menus in the menu bar of the window
+		menu.add(items);
+		menu.add(items1);
+		menu.add(items2);
+		menu.add(items4);
+		menu.add(items3);
+		frame.setJMenuBar(menu);// Sets the menu bar in the frame
+	}
+
+	// For creating the main playing area of a game
+	private void leftColumn() {
+		asideLeft = new JPanel();// Creates a new panel that is capable of adding other many swing component
+		contain.add(asideLeft);// Adds the "asideLeft" panel in the container of main frame/window
+		asideLeft.setBounds(0, 0, 630, 540);// Sets the position and the size of the respected panel
+		asideLeft.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));// Gives the border to the panel
+		asideLeft.setLayout(new GridLayout(13, 16, 0, 0));// Sets the "GridLyout" of the panel with 13 rows and 16
+															// columns
+
+		spaceImg = new JButton[13][16];// Creates the 2D arrays of button with 13 rows and 16 column
+		for ( i = 0; i < spaceImg.length; i++) { // Starts the loop of row of the button
+			for (j = 0; j < spaceImg[0].length; j++) { // Starts the loop of column of the button
+
+				spaceImg[i][j] = new JButton();// Sets the icon of the button with
+				spaceImg[i][j].setIcon(background);																	// the given image
+
+//				spaceImg[i][j].setBorderPainted(false);//Specifies the border of button to be not painted
+				asideLeft.add(spaceImg[i][j]);// Adds the "spaceImg" button in this "asideLeft" panel
+			}
+		}
+		// For making the four corner of the outer wall
+		spaceImg[0][0].setIcon(new ImageIcon("./Images/wall-NW.png"));
+		spaceImg[0][15].setIcon(new ImageIcon("./Images/wall-NE.png"));
+		spaceImg[12][0].setIcon(new ImageIcon("./Images/wall-SW.png"));
+		spaceImg[12][15].setIcon(new ImageIcon("./Images/wall-SE.png"));
+
+		// For adding the outer wall horizontally on the upper part of frame
+		for ( i = 1; i < 15; i++) {
+			spaceImg[0][i].setIcon(horizWall);
+
+		}
+
+		// For adding the outer wall horizontally on the lower part of frame
+		for ( i = 1; i < 15; i++) {
+			spaceImg[12][i].setIcon(horizWall);
+
+		}
+
+		// For adding the outer wall vertically on the left part
+		for ( i = 1; i < 12; i++) {
+			spaceImg[i][0].setIcon(vertWall);
+
+		}
+
+		// For adding the outer wall vertically on the right part
+		for ( i = 1; i < 12; i++) {
+			spaceImg[i][15].setIcon(vertWall);
+
+		}
+
+		// For making the four corner of inner wall
+		spaceImg[4][3].setIcon(new ImageIcon("./Images/wall-NW.png"));
+		spaceImg[4][12].setIcon(new ImageIcon("./Images/wall-NE.png"));
+		spaceImg[8][3].setIcon(new ImageIcon("./Images/wall-SW.png"));
+		spaceImg[8][12].setIcon(new ImageIcon("./Images/wall-SE.png"));
+
+		// For making the inner vertical wall on the left side
+		for ( i = 5; i < 8; i++) {
+			spaceImg[i][3].setIcon(vertWall);
+
+		}
+
+		// For making the inner vertical wall on the right side
+		for (i = 5; i < 8; i++) {
+			spaceImg[i][12].setIcon(vertWall);
+		}
+
+		// For making the inner horizontal wall on the upper side
+		for (i = 4; i < 12; i++) {
+			spaceImg[4][i].setIcon(horizWall);
+		}
+
+		// For making the inner horizontal wall on the down side
+		for (i = 4; i < 12; i++) {
+			spaceImg[8][i].setIcon(horizWall);
+		}
+
+	}
+
+	// For creating control and information area of a game
+	private void rightColumn() {
+		JPanel asideRight = new JPanel();
+		contain.add(asideRight);
+		asideRight.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+		asideRight.setBounds(633, 0, 158, 540);
+
+		// For displaying the information of a game
+		JPanel modify = new JPanel();
+		asideRight.add(modify);
+		modify.setPreferredSize(new Dimension(150, 100));
+		modify.setLayout(new GridLayout(3, 2, 0, 5));
+		modify.setBorder(new EmptyBorder(5, 5, 5, 5));// Creates the padding between text and the button
+		JLabel option = new JLabel("Option:  ");
+		modify.add(option);
+		options = new JTextField(5);
+		options.setText("1");
+		options.setHorizontalAlignment(JTextField.CENTER);// Specifies the alignment of the text to the center in the
+															// textfield
+
+		modify.add(options);
+		JLabel square = new JLabel("Square:  ");
+		modify.add(square);
+		squares = new JTextField(5);
+		squares.setHorizontalAlignment(JTextField.CENTER);
+		squares.setText(x+","+y);
+		modify.add(squares);
+		JLabel direction = new JLabel("Direction:  ");
+		modify.add(direction);
+		directions = new JTextField(5);
+		directions.setText("East");
+		directions.setHorizontalAlignment(JTextField.CENTER);
+		
+		modify.add(directions);
+
+		// Gives the buttons for controlling the car
+		JPanel controls = new JPanel();
+
+		asideRight.add(controls);
+		controls.setLayout(new GridLayout(3, 3));
+
+		controls.setPreferredSize(new Dimension(150, 120));// Sets the desired the size of the panel
+		blank1 = new JButton();
+		controls.add(blank1);
+		blank1.setBackground(new Color(238, 238, 238));// Specifies the color of the panel
+		blank1.setBorderPainted(false);
+
+		up = new JButton("^");
+		controls.add(up);
+		up.setBackground(Color.WHITE);
+		up.setEnabled(false);
+		up.setBorder(BorderFactory.createRaisedBevelBorder());// Gives the elevated look to the button "up"
+		up.addActionListener(new ActionListener() {
+			// Action listener for button "Up"
+			public void actionPerformed(ActionEvent e) {
+				directions.setText("North");
+				compassHolder.setIcon(north);
+				
+				if(spaceImg[x][y].getIcon()==carNorth) {
+					spaceImg[x][y].setIcon(background);
+					x=x-1;
+					spaceImg[x][y].setIcon(carNorth);
+					
+				}
+				
+				else {
+					spaceImg[x][y].setIcon(carNorth);
+				}
+				
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/space.jpg"));
+//				x = x - 1;
+//
+//				
+//				if(spaceImg[x-1][y].getIcon()==vertWall || spaceImg[x-1][y].getIcon()==horizWall ||  spaceImg[x-1][y].getIcon()==N0W ||  spaceImg[x-1][y].getIcon()==N0E ||  spaceImg[x-1][y].getIcon()==S0W ||  spaceImg[x-1][y].getIcon()==S0E) {
+//					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-n.png"));
+//					timer.stop();
+//					up.setEnabled(false);
+//					right.setEnabled(false);
+//					left.setEnabled(false);
+//					down.setEnabled(false);
+//					run.setEnabled(false);
+//					clickChecker=true;
+//					run.setText("  " + "Run" + "  ");
+//					run.setIcon(myImage1);
+//					JOptionPane.showMessageDialog(null, "Gameover. Click the reset button to play again.");
+//					
+//					
+//				}
+//				else {
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-s.png"));
+//				}
+				
+				squares.setText((x-1)+","+y);
+				
+				
+				
+				
+//				if(spaceImg[x-1][y].getIcon()==background) {
+//					spaceImg[x][y].setIcon(new ImageIcon("./Images/space.jpg"));
+//					x=x-1;
+//					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-n.png"));					
+//				}
+//				
+//				else {
+//					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-n.png"));
+//					JOptionPane.showMessageDialog(null, "restartgame");
+//				}
+				
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/space.jpg"));//Sets the icon of button with positon x and y
+//				x = x -1;//Decreas the value of x by 1
+////				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-n.png"));
+//				
+//				if(spaceImg[x-1][y].getIcon()==vertWall || spaceImg[x][y+1].getIcon()==horizWall) {
+////					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-e.png"));
+//					reset.doClick();
+//					
+//					
+//				}
+//				else {
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-n.png"));
+//				}
+				
+			
+				
+				
+
+			}
+		});
+
+		blank1 = new JButton();
+		controls.add(blank1);
+		blank1.setBackground(new Color(238, 238, 238));
+		blank1.setBorderPainted(false);
+		left = new JButton("<");
+		controls.add(left);
+		left.setBackground(Color.WHITE);
+		left.setEnabled(false);
+		left.setBorder(BorderFactory.createRaisedBevelBorder());
+		left.addActionListener(new ActionListener() {
+			//Action listener for button "left". Performs the specified action when the button is clicked 
+			public void actionPerformed(ActionEvent e) {
+				directions.setText("West");//Sets the text in the direction JTextField when the button is clicked
+				compassHolder.setIcon(west);//Sets the specified icon in the respected button when left button is clicked
+				
+				if(spaceImg[x][y].getIcon()==carWest) {
+					spaceImg[x][y].setIcon(background);
+					y=y-1;
+					spaceImg[x][y].setIcon(carWest);
+					
+				}
+				
+				else {
+					spaceImg[x][y].setIcon(carWest);
+				}
+				
+				
+				
+				
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/space.jpg"));
+//				y = y - 1;
+//				
+//				
+//
+//				
+//				if(spaceImg[x][y-1].getIcon()==vertWall || spaceImg[x][y].getIcon()==horizWall) {
+//					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-w.png"));
+//					timer.stop();
+//					up.setEnabled(false);
+//					right.setEnabled(false);
+//					left.setEnabled(false);
+//					down.setEnabled(false);
+//					run.setEnabled(false);
+//					clickChecker=true;
+//					run.setText("  " + "Run" + "  ");
+//					run.setIcon(myImage1);
+//					JOptionPane.showMessageDialog(null, "Gameover. Click the reset button to play again.");
+//				}
+//				else {
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-w.png"));
+//				}
+				
+				
+				squares.setText(x+","+(y-1));
+
+			}
+		});
+		blank1 = new JButton();
+		controls.add(blank1);
+		blank1.setBackground(new Color(238, 238, 238));
+
+		blank1.setBorderPainted(false);
+		right = new JButton(">");
+		controls.add(right);
+		right.setEnabled(false);
+		right.setBorder(BorderFactory.createRaisedBevelBorder());
+		right.addActionListener(new ActionListener() {
+			//Action listener for the button "Right"
+			public void actionPerformed(ActionEvent e) {
+				directions.setText("East");
+				compassHolder.setIcon(east);
+				
+				if(spaceImg[x][y].getIcon()==carEast) {
+					spaceImg[x][y].setIcon(background);
+					y=y+1;
+					spaceImg[x][y].setIcon(carEast);
+					
+				}
+				
+				else {
+					spaceImg[x][y].setIcon(carEast);
+				}
+				
+				
+				
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/space.jpg"));
+//				y = y + 1;
+//				if(spaceImg[x][y+1].getIcon()==vertWall || spaceImg[x][y+1].getIcon()==horizWall) {
+//					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-e.png"));
+//					timer.stop();
+//					up.setEnabled(false);
+//					right.setEnabled(false);
+//					left.setEnabled(false);
+//					down.setEnabled(false);
+//					run.setEnabled(false);
+//					clickChecker=true;
+//					run.setText("  " + "Run" + "  ");
+//					run.setIcon(myImage1);
+//					JOptionPane.showMessageDialog(null, "Gameover. Click the reset button to play again.");			
+//					
+//				}
+//				else {
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-e.png"));
+//				}
+				
+				squares.setText(x+","+(y+1));
+			}
+		});
+		blank1.setBorderPainted(false);
+		right.setBackground(Color.WHITE);
+		blank1 = new JButton();
+		controls.add(blank1);
+		blank1.setBackground(new Color(238, 238, 238));
+		blank1.setBorderPainted(false);
+		down = new JButton("v");
+		controls.add(down);
+		down.setBackground(Color.WHITE);
+		down.setEnabled(false);
+		down.setBorder(BorderFactory.createRaisedBevelBorder());
+		down.addActionListener(new ActionListener() {
+			//Action listener for the button "Down"
+			public void actionPerformed(ActionEvent e) {
+				directions.setText("South");
+				compassHolder.setIcon(south);
+				
+				
+				spaceImg[x][y].setIcon(new ImageIcon("./Images/space.jpg"));
+				x = x + 1;
+
+				
+				if(spaceImg[x+1][y].getIcon()==vertWall || spaceImg[x+1][y].getIcon()==horizWall ||  spaceImg[x+1][y].getIcon()==N0W ||  spaceImg[x+1][y].getIcon()==N0E ||  spaceImg[x+1][y].getIcon()==S0W ||  spaceImg[x+1][y].getIcon()==S0E) {
+					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-n.png"));
+					timer.stop();
+					up.setEnabled(false);
+					right.setEnabled(false);
+					left.setEnabled(false);
+					down.setEnabled(false);
+					run.setEnabled(false);
+					clickChecker=true;
+					run.setText("  " + "Run" + "  ");
+					run.setIcon(myImage1);
+					JOptionPane.showMessageDialog(null, "Gameover. Click the reset button to play again.");
+					
+					
+				}
+				else {
+				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-s.png"));
+				}
+				
+				squares.setText((x+1)+","+y);
+				
+//				y=y+1;
+//				if(spaceImg[x][y].getIcon() != background) {
+//					spaceImg[x][y-1].setIcon(new ImageIcon("./Images/car-s.png"));
+//				}
+				
+				
+				
+				
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/space.jpg"));
+//				x = x + 1;
+////				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-s.png"));
+				
+//				if(spaceImg[x+1][y].getIcon()==vertWall || spaceImg[x+1][y].getIcon()==horizWall ||  spaceImg[x+1][y].getIcon()==N0W ||  spaceImg[x+1][y].getIcon()==N0E ||  spaceImg[x+1][y].getIcon()==S0W ||  spaceImg[x+1][y].getIcon()==S0E) {
+//					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-s.png"));
+//					timer.stop();
+//					up.setEnabled(false);
+//					right.setEnabled(false);
+//					left.setEnabled(false);
+//					down.setEnabled(false);
+//					run.setEnabled(false);
+//					clickChecker=true;
+//					run.setText("  " + "Run" + "  ");
+//					run.setIcon(myImage1);
+//					JOptionPane.showMessageDialog(null, "Gameover. Click the reset button to play again.");
+//					
+//					
+//				}
+//				else {
+//				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-s.png"));
+//				}
+//
+//				squares.setText((x+1)+","+y);
+			}
+		});
+		blank1 = new JButton();
+		controls.add(blank1);
+		blank1.setBackground(new Color(238, 238, 238));
+		blank1.setBorderPainted(false);
+
+		// Gives the area to display the timer in the right column
+		JPanel timer = new JPanel();
+		asideRight.add(timer);
+		timer.setPreferredSize(new Dimension(150, 60));
+		timer.setLayout(new FlowLayout());
+
+		JLabel space = new JLabel("       ");
+		timer.add(space);
+		JLabel digitalTimer = new JLabel("DIGITAL TIMER");
+		timer.add(digitalTimer);
+		JLabel space1 = new JLabel("    ");
+		timer.add(space1);
+		hour = new JTextField(2);
+		hour.setForeground(Color.WHITE);
+		hour.setBackground(Color.BLACK);
+		hour.setText("00");
+		timer.add(hour);
+		JLabel seperator = new JLabel(":");
+		timer.add(seperator);
+		minute = new JTextField(2);
+		minute.setText("00");
+		minute.setForeground(Color.WHITE);//Sets the color of the text inside the field white
+		minute.setBackground(Color.BLACK);
+		timer.add(minute);
+		JLabel seperator1 = new JLabel(":");
+		timer.add(seperator1);
+		second = new JTextField(2);
+		second.setForeground(Color.WHITE);
+		second.setBackground(Color.BLACK);
+		second.setText("00");
+		timer.add(second);
+		JLabel seperator2 = new JLabel(":");
+		timer.add(seperator2);
+		milisecond = new JTextField(2);
+		milisecond.setText("00");
+		milisecond.setForeground(Color.WHITE);
+		milisecond.setBackground(Color.BLACK);
+		timer.add(milisecond);
+
+		// For specifying the layout of the game and exiting the game
+		JPanel optionsChoice = new JPanel();
+		asideRight.add(optionsChoice);
+		optionsChoice.setPreferredSize(new Dimension(150, 80));
+		optionsChoice.setLayout(new GridLayout(2, 2, 5, 5));
+		option1 = new JButton("Option 1");
+		optionsChoice.add(option1);
+		option1.setBackground(Color.WHITE);
+		option1.setMargin(new Insets(1, 1, 1, 1));
+		option1.setFont(new Font(null, Font.BOLD, 13));
+		option1.addActionListener(new ActionListener() {
+			//Action listener of the button "Option1"
+			public void actionPerformed(ActionEvent option1) {
+				options.setText("1");
+				// Clears the obstacle of "option 2" if it is the present obstacle
+				if (spaceImg[1][6].getIcon() == horizWall && spaceImg[2][8].getIcon() == horizWall
+						&& spaceImg[2][13].getIcon() == horizWall && spaceImg[6][14].getIcon() == horizWall
+						&& spaceImg[11][6].getIcon() == horizWall && spaceImg[4][2].getIcon() == horizWall
+						&& spaceImg[10][8].getIcon() == horizWall && spaceImg[10][10].getIcon() == horizWall
+						 && spaceImg[2][4].getIcon() == background
+						&& spaceImg[1][11].getIcon() == background && spaceImg[1][12].getIcon() == background
+						&& spaceImg[2][9].getIcon() == background && spaceImg[1][7].getIcon() == background
+						&& spaceImg[4][13].getIcon() == background && spaceImg[7][14].getIcon() == background
+						&& spaceImg[10][5].getIcon() == background && spaceImg[10][11].getIcon() == background
+						&& spaceImg[10][9].getIcon() == background && spaceImg[10][1].getIcon() == background
+						&& spaceImg[11][7].getIcon() == background && spaceImg[4][1].getIcon() == background
+						&& spaceImg[8][2].getIcon() == background) {
+					spaceImg[1][6].setIcon(background);
+					spaceImg[2][8].setIcon(background);
+					spaceImg[2][13].setIcon(background);
+					spaceImg[6][14].setIcon(background);
+					spaceImg[11][6].setIcon(background);
+					spaceImg[4][2].setIcon(background);
+					spaceImg[10][8].setIcon(background);
+					spaceImg[10][10].setIcon(background);
+
+				}
+
+				// Clears the obstacle of "Option3" if it is the present obstacle
+				if ( spaceImg[2][4].getIcon() == vertWall
+						&& spaceImg[1][11].getIcon() == vertWall && spaceImg[1][12].getIcon() == horizWall
+						&& spaceImg[2][9].getIcon() == horizWall && spaceImg[1][7].getIcon() == horizWall
+						&& spaceImg[4][13].getIcon() == horizWall && spaceImg[7][14].getIcon() == vertWall
+						&& spaceImg[10][5].getIcon() == horizWall && spaceImg[10][11].getIcon() == vertWall
+						&& spaceImg[10][9].getIcon() == vertWall && spaceImg[10][1].getIcon() == vertWall
+						&& spaceImg[11][7].getIcon() == vertWall && spaceImg[4][1].getIcon() == vertWall
+						&& spaceImg[8][2].getIcon() == vertWall && spaceImg[1][6].getIcon() == background
+						&& spaceImg[2][8].getIcon() == background && spaceImg[2][13].getIcon() == background
+						&& spaceImg[6][14].getIcon() == background && spaceImg[11][6].getIcon() == background
+						&& spaceImg[4][2].getIcon() == background && spaceImg[10][8].getIcon() == background
+						&& spaceImg[10][10].getIcon() == background) {
+					spaceImg[1][2].setIcon(background);
+					spaceImg[2][4].setIcon(background);
+					spaceImg[1][11].setIcon(background);
+					spaceImg[1][12].setIcon(background);
+					spaceImg[2][9].setIcon(background);
+					spaceImg[1][7].setIcon(background);
+					spaceImg[4][13].setIcon(background);
+					spaceImg[7][14].setIcon(background);
+					spaceImg[10][5].setIcon(background);
+					spaceImg[10][11].setIcon(background);
+					spaceImg[10][9].setIcon(background);
+					spaceImg[10][1].setIcon(background);
+					spaceImg[11][7].setIcon(background);
+					spaceImg[4][1].setIcon(background);
+					spaceImg[8][2].setIcon(background);
+
+				}
+
+			}
+		});
+		option2 = new JButton("Option 2");
+		optionsChoice.add(option2);
+		option2.setFont(new Font(null, Font.BOLD, 13));
+		option2.setBackground(Color.WHITE);
+		option2.setMargin(new Insets(1, 1, 1, 1));
+		option2.addActionListener(new ActionListener() {
+			//Action listener of the button "Option2"
+			public void actionPerformed(ActionEvent e) {
+				options.setText("2");
+				spaceImg[1][6].setIcon(horizWall);
+				spaceImg[2][8].setIcon(horizWall);
+				spaceImg[2][13].setIcon(horizWall);
+				spaceImg[6][14].setIcon(horizWall);
+				spaceImg[11][6].setIcon(horizWall);
+				spaceImg[4][2].setIcon(horizWall);
+				spaceImg[10][8].setIcon(horizWall);
+				spaceImg[10][10].setIcon(horizWall);
+
+				
+				spaceImg[2][4].setIcon(background);
+				spaceImg[1][11].setIcon(background);
+				spaceImg[1][12].setIcon(background);
+				spaceImg[2][9].setIcon(background);
+				spaceImg[1][7].setIcon(background);
+				spaceImg[4][13].setIcon(background);
+				spaceImg[7][14].setIcon(background);
+				spaceImg[10][5].setIcon(background);
+				spaceImg[10][11].setIcon(background);
+				spaceImg[10][9].setIcon(background);
+				spaceImg[10][1].setIcon(background);
+				spaceImg[11][7].setIcon(background);
+				spaceImg[4][1].setIcon(background);
+				spaceImg[8][2].setIcon(background);
+
+			}
+		});
+		option3 = new JButton("Option 3");
+		optionsChoice.add(option3);
+		option3.setFont(new Font(null, Font.BOLD, 13));
+		option3.setBackground(Color.WHITE);
+		option3.setMargin(new Insets(1, 1, 1, 1));
+		option3.addActionListener(new ActionListener() {
+			//Action listener of the button "Option3"
+			public void actionPerformed(ActionEvent e) {
+				options.setText("3");
+				//sets the specified icon on the specified location
+//				spaceImg[1][2].setIcon(vertWall);
+				spaceImg[2][4].setIcon(vertWall);
+				spaceImg[1][11].setIcon(vertWall);
+				spaceImg[1][12].setIcon(horizWall);
+				spaceImg[2][9].setIcon(horizWall);
+				spaceImg[1][7].setIcon(horizWall);
+				spaceImg[4][13].setIcon(horizWall);
+				spaceImg[7][14].setIcon(vertWall);
+				spaceImg[10][5].setIcon(horizWall);
+				spaceImg[10][11].setIcon(vertWall);
+				spaceImg[10][9].setIcon(vertWall);
+				spaceImg[10][1].setIcon(vertWall);
+				spaceImg[11][7].setIcon(vertWall);
+				spaceImg[4][1].setIcon(vertWall);
+				spaceImg[8][2].setIcon(vertWall);
+
+				spaceImg[1][6].setIcon(background);
+				spaceImg[2][8].setIcon(background);
+				spaceImg[2][13].setIcon(background);
+				spaceImg[6][14].setIcon(background);
+				spaceImg[11][6].setIcon(background);
+				spaceImg[4][2].setIcon(background);
+				spaceImg[10][8].setIcon(background);
+				spaceImg[10][10].setIcon(background);
+
+			}
+		});
+		exit = new JButton("Exit");
+		optionsChoice.add(exit);
+		exit.setFont(new Font(null, Font.BOLD, 13));
+		exit.setMargin(new Insets(1, 1, 1, 1));
+		exit.setBackground(Color.WHITE);
+		exit.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+
+			}
+		});
+
+		// Show the direction the car is moving
+		compass = new JPanel();
+		asideRight.add(compass);
+		compass.setPreferredSize(new Dimension(150, 130));
+		compassHolder = new JButton();
+		compass.add(compassHolder);
+		compassHolder.setIcon(east);
+		compassHolder.setBackground(Color.WHITE);
+
+	}
+
+	private void footer() {
+
+		bottom = new JPanel();
+		contain.add(bottom);
+		bottom.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+		bottom.setBounds(0, 543, 790, 49);
+		bottom.setLayout(new FlowLayout());
+
+		JLabel space1 = new JLabel("        ");
+		bottom.add(space1);
+		act = new JButton("Act");
+		bottom.add(act);
+		act.setIcon(myImage);
+		act.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				directions.setText("East");
+				compassHolder.setIcon(east);
+				spaceImg[x][y].setIcon(new ImageIcon("./Images/space.jpg"));
+				y = y + 1;
+				if(spaceImg[x][y+1].getIcon()==vertWall || spaceImg[x][y+1].getIcon()==horizWall) {
+					spaceImg[x][y].setIcon(new ImageIcon("./Images/car-e.png"));
+					timer.stop();
+					up.setEnabled(false);
+					right.setEnabled(false);
+					left.setEnabled(false);
+					down.setEnabled(false);
+					run.setEnabled(false);
+					clickChecker=true;
+					run.setText("  " + "Run" + "  ");
+					run.setIcon(myImage1);
+					JOptionPane.showMessageDialog(null, "Gameover. Click the reset button to play again.");			
+					
+				}
+				else {
+				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-e.png"));
+				}
+				
+				squares.setText(x+","+(y+1));
+				
+			}
+		});
+
+		run = new JButton();
+		run.setText("  " + "Run" + "  ");
+		bottom.add(run);
+		run.setIcon(myImage1);
+		run.addActionListener(new ActionListener() {
+
+			// Action listener for run Button
+			public void actionPerformed(ActionEvent runButton) {
+
+				if (clickChecker == false) {
+					timer.start();// Starts the timer in the game
+					up.setEnabled(true);// Enables the button that moves the car up
+					right.setEnabled(true);// Enables the button that moves the car right
+					left.setEnabled(true);// Enables the button that moves the car left
+					down.setEnabled(true);// Enables the button that moves the car down
+					act.setEnabled(false);// Disables the "Act" button
+					option1.setEnabled(false);// Disables the "Option1" button
+					option2.setEnabled(false);// Disables the "OPtion2" button
+					option3.setEnabled(false);// Disables the "OPtions3" button
+					run.setText("Pause");
+					run.setIcon(myImage3);
+					clickChecker = true;
+				}
+
+				else {
+					run.setText("  " + "Run" + "  ");
+					run.setIcon(myImage1);
+					timer.stop();
+					clickChecker = false;
+
+				}
+
+			}
+		});
+
+		reset = new JButton("Reset");
+		bottom.add(reset);
+		reset.setIcon(myImage2);
+		reset.addActionListener(new ActionListener() {
+
+			// Action listener for Reset Button
+			public void actionPerformed(ActionEvent resets) {
+				timer.stop();
+				milisecond.setText("00");
+				second.setText("00");
+				minute.setText("00");
+				hour.setText("00");
+				run.setText("  " + "Run" + "  ");
+				run.setIcon(myImage1);
+				up.setEnabled(false);
+				right.setEnabled(false);
+				left.setEnabled(false);
+				down.setEnabled(false);
+				act.setEnabled(true);
+				run.setEnabled(true);
+				option1.setEnabled(true);
+				option2.setEnabled(true);
+				option3.setEnabled(true);
+				miliseconds = 1;
+				seconds = 1;
+				minutes = 1;
+				hours = 1;				
+				spaceImg[x][y].setIcon(background);
+				x=1;  //sets the initial int value of "x"/car to 1				
+				y=1;  //sets the initial int value of "y"/car to 1	
+				squares.setText(x+","+y);
+				spaceImg[x][y].setIcon(new ImageIcon("./Images/car-e.png"));
+				
+
+				// Resets the obstacle of "option 2"
+				if (spaceImg[1][6].getIcon() == horizWall && spaceImg[2][8].getIcon() == horizWall
+						&& spaceImg[2][13].getIcon() == horizWall && spaceImg[6][14].getIcon() == horizWall
+						&& spaceImg[11][6].getIcon() == horizWall && spaceImg[4][2].getIcon() == horizWall
+						&& spaceImg[10][8].getIcon() == horizWall && spaceImg[10][10].getIcon() == horizWall
+						 && spaceImg[2][4].getIcon() == background
+						&& spaceImg[1][11].getIcon() == background && spaceImg[1][12].getIcon() == background
+						&& spaceImg[2][9].getIcon() == background && spaceImg[1][7].getIcon() == background
+						&& spaceImg[4][13].getIcon() == background && spaceImg[7][14].getIcon() == background
+						&& spaceImg[10][5].getIcon() == background && spaceImg[10][11].getIcon() == background
+						&& spaceImg[10][9].getIcon() == background && spaceImg[10][1].getIcon() == background
+						&& spaceImg[11][7].getIcon() == background && spaceImg[4][1].getIcon() == background
+						&& spaceImg[8][2].getIcon() == background) {
+					spaceImg[1][6].setIcon(background);
+					spaceImg[2][8].setIcon(background);
+					spaceImg[2][13].setIcon(background);
+					spaceImg[6][14].setIcon(background);
+					spaceImg[11][6].setIcon(background);
+					spaceImg[4][2].setIcon(background);
+					spaceImg[10][8].setIcon(background);
+					spaceImg[10][10].setIcon(background);
+
+				}
+
+				// Resets the obstacle of "Option3"
+				if ( spaceImg[2][4].getIcon() == vertWall
+						&& spaceImg[1][11].getIcon() == vertWall && spaceImg[1][12].getIcon() == horizWall
+						&& spaceImg[2][9].getIcon() == horizWall && spaceImg[1][7].getIcon() == horizWall
+						&& spaceImg[4][13].getIcon() == horizWall && spaceImg[7][14].getIcon() == vertWall
+						&& spaceImg[10][5].getIcon() == horizWall && spaceImg[10][11].getIcon() == vertWall
+						&& spaceImg[10][9].getIcon() == vertWall && spaceImg[10][1].getIcon() == vertWall
+						&& spaceImg[11][7].getIcon() == vertWall && spaceImg[4][1].getIcon() == vertWall
+						&& spaceImg[8][2].getIcon() == vertWall && spaceImg[1][6].getIcon() == background
+						&& spaceImg[2][8].getIcon() == background && spaceImg[2][13].getIcon() == background
+						&& spaceImg[6][14].getIcon() == background && spaceImg[11][6].getIcon() == background
+						&& spaceImg[4][2].getIcon() == background && spaceImg[10][8].getIcon() == background
+						&& spaceImg[10][10].getIcon() == background) {
+					
+					spaceImg[2][4].setIcon(background);
+					spaceImg[1][11].setIcon(background);
+					spaceImg[1][12].setIcon(background);
+					spaceImg[2][9].setIcon(background);
+					spaceImg[1][7].setIcon(background);
+					spaceImg[4][13].setIcon(background);
+					spaceImg[7][14].setIcon(background);
+					spaceImg[10][5].setIcon(background);
+					spaceImg[10][11].setIcon(background);
+					spaceImg[10][9].setIcon(background);
+					spaceImg[10][1].setIcon(background);
+					spaceImg[11][7].setIcon(background);
+					spaceImg[4][1].setIcon(background);
+					spaceImg[8][2].setIcon(background);
+
+				}
+
+			}
+		});
+
+		JLabel space = new JLabel("                                                             ");
+		bottom.add(space);
+		JLabel speed = new JLabel("Speed : ");
+		bottom.add(speed);
+
+		JSlider slide = new JSlider();
+		bottom.add(slide);
+		slide.setMajorTickSpacing(20);
+		slide.setPaintTicks(true);
+
+	}
+
+	public void actionPerformed(ActionEvent wholeFrame) {
+		//if statements for making the timer run
+		milisecond.setText("" + miliseconds);
+		miliseconds++;
+
+		if (miliseconds == 100) {
+			second.setText("" + seconds);
+			seconds++;
+
+			miliseconds = 1;
+		}
+
+		if (seconds == 61) {
+			minute.setText("" + minutes);
+			minutes++;
+
+			seconds = 1;
+		}
+
+		if (minutes == 61) {
+			hour.setText("" + hours);
+			hours++;
+			minutes = 1;
+
+		}
+
+
+	}
+
+	public void driveCar() {
+		spaceImg[x][y].setIcon(new ImageIcon("./Images/car-e.png"));
+		
+
+
+	}
+
+}
